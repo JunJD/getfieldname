@@ -2,8 +2,8 @@
  * todo
  * [done] gpt的 function call
  * [done] ‘/’触发SlashCommand，SlashCommand实现一个item类
- * [] 实现一个变量转换功能的item
- * [] 实现一个
+ * [] 实现一个变量转换功能的item => ai 接口太慢了！
+ * [] selection选区、空格问题
  */
 
 import * as vscode from "vscode";
