@@ -9,13 +9,35 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onLanguage"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
         "command": "getfieldname.helloWorld",
         "title": "Hello World"
+      },
+      {
+        "command": "extension.enterHasSelectionCommand",
+        "title": "enter HasSelection Command"
+      },
+      {
+        "command": "extension.tabHasSelectionCommand",
+        "title": "tab HasSelection Command"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "extension.enterHasSelectionCommand",
+        "key": "enter",
+        "when": "editorTextFocus && editorHasSelection" 
+      },
+      {
+        "command": "extension.tabHasSelectionCommand",
+        "key": "tab",
+        "when": "editorTextFocus && editorHasSelection"
       }
     ]
   },
@@ -47,6 +69,7 @@
   },
   "dependencies": {
     "@vscode/vsce": "^2.21.1",
+    "node-fetch": "^3.3.2",
     "vsce": "^2.15.0"
   }
 }

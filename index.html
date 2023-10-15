@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      (async function () {
+        const functions = [
+          {
+            name: "get_var",
+            description: `            
+            According to the Chinese name provided by the user, generate multiple English variables to meet the user's naming needs during the programming process. The requirements for naming variables are as follows
+                  `,
+            parameters: {
+              type: "object",
+              properties: {
+                var_name1: {
+                  type: "string",
+                  description:
+                    "Generate an English variable based on the Chinese name provided by the user, which is relatively specific and comprehensive.Use Camel case naming convention",
+                },
+                var_name2: {
+                  type: "string",
+                  description:
+                    "Generate an English variable based on the Chinese name provided by the user, which is relatively abstract and comprehensive.Use Camel case naming convention",
+                },
+                var_name3: {
+                  type: "string",
+                  description:
+                    "Generate an English variable based on the Chinese name provided by the user, which is relatively abstract and comprehensive.Use Camel case naming convention",
+                },
+                var_name4: {
+                  type: "string",
+                  description:
+                    "Generate an English variable based on the Chinese name provided by the user, which is relatively abstract but not comprehensive.Use Camel case naming convention",
+                },
+              },
+              required: ["var_name1", "var_name2", "var_name3", "var_name4"],
+            },
+          },
+        ];
+
+        const response = await fetch(
+          "https://run.dingjunjie.com/v1/chat/completions",
+          {
+            method: "POST",
+            headers: {
+              // eslint-disable-next-line @typescript-eslint/naming-convention
+              "Content-Type": "application/json",
+              authorization:
+                "Bearer " +
+                "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",
+            },
+            body: JSON.stringify({
+              model: "gpt-3.5-turbo-16k-0613",
+              temperature: 0,
+              messages: [
+                {
+                  role: "user",
+                  content: `
+                  单词起始和结束位置元组
+                        `,
+                },
+              ],
+              functions: functions,
+              stream: false,
+            }),
+          }
+        );
+        console.log("response", await response.json());
+      })();
+    </script>
+  </body>
+</html>
