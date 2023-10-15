@@ -16,18 +16,36 @@ export default class Suggestion {
     const customCompletionItemProvider = new CustomCompletionItemProvider(
       this.suggestionItems,
       (lineText) => {
-        return !lineText.endsWith('///');
+        return !lineText.endsWith("///");
       }
     );
     const disposable = vscode.languages.registerCompletionItemProvider(
       { scheme: "file" },
       customCompletionItemProvider,
-      "\/"
+      "/"
     );
     // 注册命令处理程序
     const commandDisposable = vscode.commands.registerCommand(
       "extension.itemSelected",
-      async(command: () => void) => {
+      async (command: () => void) => {
+        const editor = vscode.window.activeTextEditor;
+        if (editor) {
+          const position = editor.selection.active;
+          const document = editor.document;
+          const line = document.lineAt(position.line);
+          const startPosition = new vscode.Position(
+            position.line,
+            line.range.end.character - 3
+          ); // 设置起始位置
+          const endPosition = new vscode.Position(
+            position.line,
+            line.range.end.character
+          ); // 设置结束位置
+          const selection = new vscode.Selection(startPosition, endPosition);
+          editor.edit((editBuilder) => {
+            editBuilder.delete(selection);
+          });
+        }
         await command();
       }
     );

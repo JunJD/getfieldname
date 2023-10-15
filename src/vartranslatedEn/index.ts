@@ -21,6 +21,7 @@ export default class VartranslatedEn {
   public async run() {
     try {
       if (!this?.selectedText) {
+        vscode.window.showWarningMessage("未选中文本");
         return [];
       }
       const response = await fetch(
@@ -32,52 +33,41 @@ export default class VartranslatedEn {
             "Content-Type": "application/json",
             authorization:
               // "Bearer " + "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",
-              "Bearer " + "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",
+              "Bearer " + "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",
           },
           body: JSON.stringify({
             model: "gpt-3.5-turbo-16k-0613",
-            temperature: 0,
             messages: [
               {
                 role: "user",
                 content: `
-                [functions_calling]
-                According to the Chinese name provided by the user, generate multiple English variables to meet the user's naming needs during the programming process. The requirements for naming variables are as follows/\n
-                ${this.selectedText}
-                      `,
+                我在自学编程，但是我的母语不是英语，我需要将${this.selectedText} 字段改写成英文变量，你可以教我改吗？
+                  `,
               },
             ],
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            function_call: {
+              name: "get_var",
+            },
             functions: [
               {
                 name: "get_var",
                 description: `            
-                    According to the Chinese name provided by the user, generate multiple English variables to meet the user's naming needs during the programming process. The requirements for naming variables are as follows
+                    根据当前中文变量，改写成英文变量，变量符合编程习惯
                           `,
                 parameters: {
                   type: "object",
                   properties: {
                     varName1: {
                       type: "string",
-                      description:
-                        "Generate an English variable based on the Chinese name provided by the user, which is relatively specific and comprehensive.Use Camel case naming convention",
+                      description: "这里指改写后的英文变量，符合驼峰命名",
                     },
                     varName2: {
                       type: "string",
-                      description:
-                        "Generate an English variable based on the Chinese name provided by the user, which is relatively abstract and comprehensive.Use Camel case naming convention",
-                    },
-                    varName3: {
-                      type: "string",
-                      description:
-                        "Generate an English variable based on the Chinese name provided by the user, which is relatively abstract and comprehensive.Use Camel case naming convention",
-                    },
-                    varName4: {
-                      type: "string",
-                      description:
-                        "Generate an English variable based on the Chinese name provided by the user, which is relatively abstract but not comprehensive.Use Camel case naming convention",
+                      description: "这里同样是指改写后的英文变量，也符合驼峰命名，但它是备用变量",
                     },
                   },
-                  required: ["varName1", "varName2", "varName3", "varName4"],
+                  required: ["varName1", "varName2"],
                 },
               },
             ],
@@ -86,22 +76,26 @@ export default class VartranslatedEn {
         }
       );
       if (response.status !== 200) {
-        vscode.window.showErrorMessage("ai接口状态码：", response.statusText);
+        const { error } = (await response.json()) as any;
+        console.log(error, "error");
+        vscode.window.showErrorMessage(error.message, response.statusText);
         return [];
       }
-      const variablesStr0 = (await response.json()) as AiResurt;
-      const variablesStr1 = variablesStr0.choices[0].message.function_call;
-      if (!variablesStr1) {
+      const res = (await response.json()) as AiResurt;
+      const responseMessage = res.choices[0].message;
+      if (!responseMessage.function_call) {
+        vscode.window.showErrorMessage("ai接口返回错误");
         return [];
       }
-      const variablesStr = variablesStr1.arguments;
-
+      const variablesStr = responseMessage.function_call.arguments;
+      console.log("variablesStr===>", variablesStr);
       const variables: string[] = Object.values(JSON.parse(variablesStr));
 
       const getVartranslatedEnItem = (): CommandItemProps[] => {
         const vartranslatedEnItem = variables.map((item) => ({
           label: item,
           kind: vscode.CompletionItemKind.Event,
+          detail: item,
           isHideInsertText: false,
         }));
 

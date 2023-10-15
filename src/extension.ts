@@ -3,7 +3,7 @@
  * [done] gpt的 function call
  * [done] ‘/’触发SlashCommand，SlashCommand实现一个item类
  * [] 实现一个变量转换功能的item => ai 接口太慢了！
- * [] selection选区、空格问题
+ * [] selection选区、空格问题 => 先解决上面问题再看这个问题！
  */
 
 import * as vscode from "vscode";
@@ -65,6 +65,7 @@ export async function activate(context: vscode.ExtensionContext) {
       {
         label: "变量转换",
         kind: vscode.CompletionItemKind.Event,
+        detail: '将中文变量译成英文变量',
         isHideInsertText: true,
         command: (document: vscode.TextDocument, position: vscode.Position) => {
           const line = document.lineAt(position.line);

@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 export interface CommandItemProps {
   label: string;
   kind: vscode.CompletionItemKind | undefined;
+  detail: string;
   command?: (document: vscode.TextDocument, position: vscode.Position) => void;
   isHideInsertText: boolean;
 }
@@ -40,28 +41,12 @@ export default class CustomCompletionItemProvider
         title: item.label + " Selected",
         arguments: [
           async () => {
-            if (editor) {
-              const startPosition = new vscode.Position(
-                position.line,
-                line.range.end.character - 3
-              ); // 设置起始位置
-              const endPosition = new vscode.Position(
-                position.line,
-                line.range.end.character
-              ); // 设置结束位置
-              const selection = new vscode.Selection(
-                startPosition,
-                endPosition
-              );
-              editor.edit((editBuilder) => {
-                editBuilder.delete(selection);
-              });
-            }
             item.command && item.command(document, position);
           },
         ],
       };
-      completionItem.insertText = !item.isHideInsertText ? item.label : "";
+      completionItem.insertText = !item.isHideInsertText ? new vscode.SnippetString(item.label+':${1}'): "";
+      completionItem.detail = item.detail;
       return completionItem;
     });
 
