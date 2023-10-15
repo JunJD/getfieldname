@@ -45,7 +45,7 @@ export default class CustomCompletionItemProvider
           },
         ],
       };
-      completionItem.insertText = !item.isHideInsertText ? new vscode.SnippetString(item.label+':${1}'): "";
+      completionItem.insertText = !item.isHideInsertText ? new vscode.SnippetString(item.label+' = '): "";
       completionItem.detail = item.detail;
       return completionItem;
     });

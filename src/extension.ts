@@ -68,6 +68,25 @@ export async function activate(context: vscode.ExtensionContext) {
         detail: '将中文变量译成英文变量',
         isHideInsertText: true,
         command: (document: vscode.TextDocument, position: vscode.Position) => {
+          const editor = vscode.window.activeTextEditor;
+          if (editor) {
+            const position = editor.selection.active;
+            const document = editor.document;
+            const line = document.lineAt(position.line);
+            const startPosition = new vscode.Position(
+              position.line,
+              line.range.end.character - 3
+            ); // 设置起始位置
+            const endPosition = new vscode.Position(
+              position.line,
+              line.range.end.character
+            ); // 设置结束位置
+            const selection = new vscode.Selection(startPosition, endPosition);
+            editor.edit((editBuilder) => {
+              editBuilder.delete(selection);
+            });
+          }
+          
           const line = document.lineAt(position.line);
           const lineText = line.text;
           // 匹配中文单词的正则表达式

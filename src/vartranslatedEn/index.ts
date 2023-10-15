@@ -16,6 +16,9 @@ type AiResurt = {
   choices: ChoicesType;
 };
 
+let config = vscode.workspace.getConfiguration("getfieldname");
+let value = config.get("openaikey");
+
 export default class VartranslatedEn {
   constructor(private selectedText: string) {}
   public async run() {
@@ -32,8 +35,7 @@ export default class VartranslatedEn {
             // eslint-disable-next-line @typescript-eslint/naming-convention
             "Content-Type": "application/json",
             authorization:
-              // "Bearer " + "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",
-              "Bearer " + "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",
+              "Bearer " + value,
           },
           body: JSON.stringify({
             model: "gpt-3.5-turbo-16k-0613",
